@@ -45,7 +45,11 @@ jobs:
         run: |
           deploymentOutput=$(az deployment group create --resource-group $RESOURCE_GROUP --template-file ./infra/template.bicep --parameters ./infra/parameters.json --output json)
           echo "Deployment Output: $deploymentOutput"
-          echo "DEPLOYMENT_OUTPUT=$deploymentOutput" >> $GITHUB_OUTPUT
+          {
+            echo 'DEPLOYMENT_OUTPUT<<EOF'
+            $deploymentOutput
+            echo EOF 
+          }  >> $GITHUB_OUTPUT
 
       - name: Extract Web App Names
         id: extract
