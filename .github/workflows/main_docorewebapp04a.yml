@@ -63,6 +63,9 @@ jobs:
           echo "Web App Name West US: $webAppNameWestUS"
           echo "Web App Name East US: $webAppNameEastUS"
 
+          echo "WEBAPPNAMEWESTUS=$webAppNameWestUS" >> $GITHUB_ENV
+          echo "WEBAPPNAMEEASTUS=$webAppNameEastUS" >> $GITHUB_ENV
+
         shell: bash
         env:
           DEPLOYMENT_OUTPUT_FILE: ${{ env.DEPLOYMENT_OUTPUT_FILE }}
@@ -70,14 +73,22 @@ jobs:
       - name: Retrieve Publish Profile for West US
         id: get-publish-profile-westus
         run: |
-          az webapp deployment list-publishing-profiles --name ${{ needs.extract.outputs.webAppNameWestUS }} --resource-group $RESOURCE_GROUP --query '[?publishMethod==`MSDeploy`].{name:name, url:publishUrl, profile:publishProfile}' --output json > publishProfileWestUS.json
-          echo "::set-output name=publishProfileWestUS::$(cat publishProfileWestUS.json)"
+          az webapp deployment list-publishing-profiles --name ${{ env.WEBAPPNAMEWESTUS }} --resource-group $RESOURCE_GROUP --query '[?publishMethod==`MSDeploy`].{name:name, url:publishUrl, profile:publishProfile}' --output json > publishProfileWestUS.json
+          echo "publishProfileWestUS: $(cat publishProfileWestUS.json)"
+
+        shell: bash
+        env:
+          WEBAPPNAMEWESTUS: ${{ env.WEBAPPNAMEWESTUS }}
 
       - name: Retrieve Publish Profile for East US
         id: get-publish-profile-eastus
         run: |
-          az webapp deployment list-publishing-profiles --name ${{ needs.extract.outputs.webAppNameEastUS }} --resource-group $RESOURCE_GROUP --query '[?publishMethod==`MSDeploy`].{name:name, url:publishUrl, profile:publishProfile}' --output json > publishProfileEastUS.json
-          echo "::set-output name=publishProfileEastUS::$(cat publishProfileEastUS.json)"
+          az webapp deployment list-publishing-profiles --name ${{ env.WEBAPPNAMEEASTUS }} --resource-group $RESOURCE_GROUP --query '[?publishMethod==`MSDeploy`].{name:name, url:publishUrl, profile:publishProfile}' --output json > publishProfileEastUS.json
+          echo "publishProfileEastUS: $(cat publishProfileEastUS.json)"
+
+        shell: bash
+        env:
+          WEBAPPNAMEEASTUS: ${{ env.WEBAPPNAMEEASTUS }}
 
       - name: Deploy to Azure Web App (West US)
         id: deploy-to-webapp
