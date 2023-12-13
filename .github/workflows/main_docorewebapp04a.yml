@@ -49,8 +49,9 @@ jobs:
       - name: Extract Web App Names
         id: extract
         run: |
-          webAppNameWestUS=$(echo ${{ needs.deploy_infrastructure.outputs.deploymentOutput }} | jq -r '.properties.outputs.webAppNameWestUS.value')
-          webAppNameEastUS=$(echo ${{ needs.deploy_infrastructure.outputs.deploymentOutput }} | jq -r '.properties.outputs.webAppNameEastUS.value')
+          echo "Deployment Output: ${{ needs.deploy_infrastructure.outputs.deploymentOutput }}"
+          webAppNameWestUS=$(echo "${{ needs.deploy_infrastructure.outputs.deploymentOutput }}" | jq -r '.properties.outputs.webAppNameWestUS.value')
+          webAppNameEastUS=$(echo "${{ needs.deploy_infrastructure.outputs.deploymentOutput }}" | jq -r '.properties.outputs.webAppNameEastUS.value')
 
           echo "Web App Name West US: $webAppNameWestUS"
           echo "Web App Name East US: $webAppNameEastUS"
