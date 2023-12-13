@@ -57,8 +57,8 @@ jobs:
           cat deployment_output.txt
 
           # Use jq to extract the Web App names
-          webAppNameWestUS=$(jq -r '.properties.outputs.outputResources[] | select(.resourceType == "Microsoft.Web/sites" and .location == "westus").resourceName // empty' "$deploymentOutputFile")
-          webAppNameEastUS=$(jq -r '.properties.outputs.outputResources[] | select(.resourceType == "Microsoft.Web/sites" and .location == "eastus").resourceName // empty' "$deploymentOutputFile")
+          webAppNameWestUS=$(jq -r '.properties.outputResources[] | select(.resourceType == "Microsoft.Web/sites" and .location == "westus").resourceName // empty' "$deploymentOutputFile")
+          webAppNameEastUS=$(jq -r '.properties.outputResources[] | select(.resourceType == "Microsoft.Web/sites" and .location == "eastus").resourceName // empty' "$deploymentOutputFile")
 
           echo "Web App Name West US: $webAppNameWestUS"
           echo "Web App Name East US: $webAppNameEastUS"
