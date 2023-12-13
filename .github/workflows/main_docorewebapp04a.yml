@@ -8,7 +8,7 @@ on:
 
 jobs:
   build_and_deploy:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     env:
       RESOURCE_GROUP: devops-core-04a-RG
