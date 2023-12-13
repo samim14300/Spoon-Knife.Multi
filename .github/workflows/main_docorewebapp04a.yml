@@ -90,6 +90,11 @@ jobs:
         env:
           WEBAPPNAMEEASTUS: ${{ env.WEBAPPNAMEEASTUS }}
 
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: .net-app
+
       - name: Deploy to Azure Web App (West US)
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
