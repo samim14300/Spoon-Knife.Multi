@@ -44,26 +44,18 @@ jobs:
         id: deploy_infrastructure
         run: |
           deploymentOutput=$(az deployment group create --resource-group $RESOURCE_GROUP --template-file ./infra/template.bicep --parameters ./infra/parameters.json --output json)
-          encodedOutput=$(echo -n "$deploymentOutput" | base64)
           echo "Deployment Output: $deploymentOutput"
-          echo "DEPLOYMENT_OUTPUT=$encodedOutput" >> $GITHUB_ENV
+          echo "DEPLOYMENT_OUTPUT=$deploymentOutput" >> $GITHUB_OUTPUT
 
       - name: Extract Web App Names
         id: extract
         run: |
-          echo "Deployment Output: ${{ needs.deploy_infrastructure.outputs.deploymentOutput }}"
-          webAppNameWestUS=$(echo "${{ needs.deploy_infrastructure.outputs.deploymentOutput }}" | jq -r '.properties.outputs.webAppNameWestUS.value')
-          webAppNameEastUS=$(echo "${{ needs.deploy_infrastructure.outputs.deploymentOutput }}" | jq -r '.properties.outputs.webAppNameEastUS.value')
-
-          deploymentOutput=$(echo "$encodedOutput" | base64 --decode)
-          webAppNameWestUS=$(echo "$deploymentOutput" | jq -r '.properties.outputs.webAppNameWestUS.value')
-          webAppNameEastUS=$(echo "$deploymentOutput" | jq -r '.properties.outputs.webAppNameEastUS.value')
+          echo "Deployment Output: ${{ steps.deploy_infrastructure.outputs.DEPLOYMENT_OUTPUT }}"
+          webAppNameWestUS=$(echo "${{ steps.deploy_infrastructure.outputs.DEPLOYMENT_OUTPUT }}" | jq -r '.properties.outputs.webAppNameWestUS.value')
+          webAppNameEastUS=$(echo "${{ steps.deploy_infrastructure.outputs.DEPLOYMENT_OUTPUT }}" | jq -r '.properties.outputs.webAppNameEastUS.value')
 
           echo "Web App Name West US: $webAppNameWestUS"
           echo "Web App Name East US: $webAppNameEastUS"
-
-          echo "::set-output name=webAppNameWestUS::$webAppNameWestUS"
-          echo "::set-output name=webAppNameEastUS::$webAppNameEastUS"
 
       - name: Retrieve Publish Profile for West US
         id: get-publish-profile-westus

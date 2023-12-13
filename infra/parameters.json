@@ -9,7 +9,7 @@
       "value": "East US"
     },
     "resourceGroupName": {
-      "value": "<YOUR_RESOURCE_GROUP_NAME>"
+      "value": "devops-core-04a-RG"
     }
   }
 }
