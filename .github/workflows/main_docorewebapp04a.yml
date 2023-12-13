@@ -55,11 +55,17 @@ jobs:
           deploymentOutputFile=${{ env.DEPLOYMENT_OUTPUT_FILE }}
           cat $deploymentOutputFile
           cat deployment_output.txt
-          webAppNameWestUS=$(jq -r '.properties.outputs.webAppNameWestUS.value' "$deploymentOutputFile")
-          webAppNameEastUS=$(jq -r '.properties.outputs.webAppNameEastUS.value' "$deploymentOutputFile")
+
+          # Use jq to extract the Web App names
+          webAppNameWestUS=$(jq -r '.properties.outputs.outputResources[] | select(.resourceType == "Microsoft.Web/sites" and .location == "westus").resourceName // empty' "$deploymentOutputFile")
+          webAppNameEastUS=$(jq -r '.properties.outputs.outputResources[] | select(.resourceType == "Microsoft.Web/sites" and .location == "eastus").resourceName // empty' "$deploymentOutputFile")
 
           echo "Web App Name West US: $webAppNameWestUS"
           echo "Web App Name East US: $webAppNameEastUS"
+
+        shell: bash
+        env:
+          DEPLOYMENT_OUTPUT_FILE: ${{ env.DEPLOYMENT_OUTPUT_FILE }}
 
       - name: Retrieve Publish Profile for West US
         id: get-publish-profile-westus
