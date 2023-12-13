@@ -46,24 +46,22 @@ jobs:
           deploymentOutput=$(az deployment group create --resource-group $RESOURCE_GROUP --template-file ./infra/template.bicep --parameters ./infra/parameters.json --output json)
           echo "Deployment Output: $deploymentOutput"
 
-          echo "DEPLOYMENT_OUTPUT<<EOF" >> $GITHUB_ENV
-          echo "$deploymentOutput" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          echo "Deployment Output: $deploymentOutput" > deployment_output.txt
+          echo "DEPLOYMENT_OUTPUT_FILE=deployment_output.txt" >> $GITHUB_ENV
 
       - name: Extract Web App Names
         id: extract
         run: |
 
-          echo "Deployment Output: $DEPLOYMENT_OUTPUT"
-          webAppNameWestUS=$(echo "$DEPLOYMENT_OUTPUT" | jq -r '.properties.outputs.webAppNameWestUS.value')
-          webAppNameEastUS=$(echo "$DEPLOYMENT_OUTPUT" | jq -r '.properties.outputs.webAppNameEastUS.value')
+- name: Extract Web App Names
+  id: extract
+  run: |
+          deploymentOutputFile=${{ env.DEPLOYMENT_OUTPUT_FILE }}
+          webAppNameWestUS=$(jq -r '.properties.outputs.webAppNameWestUS.value' "$deploymentOutputFile")
+          webAppNameEastUS=$(jq -r '.properties.outputs.webAppNameEastUS.value' "$deploymentOutputFile")
 
           echo "Web App Name West US: $webAppNameWestUS"
           echo "Web App Name East US: $webAppNameEastUS"
-
-        shell: bash
-        env:
-          DEPLOYMENT_OUTPUT: ${{ env.DEPLOYMENT_OUTPUT }}
 
       - name: Retrieve Publish Profile for West US
         id: get-publish-profile-westus
