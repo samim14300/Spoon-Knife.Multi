@@ -53,12 +53,17 @@ jobs:
       - name: Extract Web App Names
         id: extract
         run: |
-          echo "Deployment Output: ${{ env.DEPLOYMENT_OUTPUT }}"
-          webAppNameWestUS=$(echo "${{ env.DEPLOYMENT_OUTPUT }}" | jq -r '.properties.outputs.webAppNameWestUS.value')
-          webAppNameEastUS=$(echo "${{ env.DEPLOYMENT_OUTPUT }}" | jq -r '.properties.outputs.webAppNameEastUS.value')
+
+          echo "Deployment Output: $DEPLOYMENT_OUTPUT"
+          webAppNameWestUS=$(echo "$DEPLOYMENT_OUTPUT" | jq -r '.properties.outputs.webAppNameWestUS.value')
+          webAppNameEastUS=$(echo "$DEPLOYMENT_OUTPUT" | jq -r '.properties.outputs.webAppNameEastUS.value')
 
           echo "Web App Name West US: $webAppNameWestUS"
           echo "Web App Name East US: $webAppNameEastUS"
+
+        shell: bash
+        env:
+          DEPLOYMENT_OUTPUT: ${{ env.DEPLOYMENT_OUTPUT }}
 
       - name: Retrieve Publish Profile for West US
         id: get-publish-profile-westus
