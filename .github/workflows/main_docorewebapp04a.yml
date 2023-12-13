@@ -53,6 +53,8 @@ jobs:
         id: extract
         run: |
           deploymentOutputFile=${{ env.DEPLOYMENT_OUTPUT_FILE }}
+          cat $deploymentOutputFile
+          cat deployment_output.txt
           webAppNameWestUS=$(jq -r '.properties.outputs.webAppNameWestUS.value' "$deploymentOutputFile")
           webAppNameEastUS=$(jq -r '.properties.outputs.webAppNameEastUS.value' "$deploymentOutputFile")
 
