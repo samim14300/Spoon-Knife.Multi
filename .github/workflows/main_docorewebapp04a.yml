@@ -52,10 +52,6 @@ jobs:
       - name: Extract Web App Names
         id: extract
         run: |
-
-- name: Extract Web App Names
-  id: extract
-  run: |
           deploymentOutputFile=${{ env.DEPLOYMENT_OUTPUT_FILE }}
           webAppNameWestUS=$(jq -r '.properties.outputs.webAppNameWestUS.value' "$deploymentOutputFile")
           webAppNameEastUS=$(jq -r '.properties.outputs.webAppNameEastUS.value' "$deploymentOutputFile")
