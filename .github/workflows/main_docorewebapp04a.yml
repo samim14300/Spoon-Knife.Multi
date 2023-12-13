@@ -44,7 +44,8 @@ jobs:
         id: deploy_infrastructure
         run: |
           deploymentOutput=$(az deployment group create --resource-group $RESOURCE_GROUP --template-file ./infra/template.bicep --parameters ./infra/parameters.json --output json)
-          echo "::set-output name=deploymentOutput::$deploymentOutput"
+          echo "Deployment Output: $deploymentOutput"
+          echo "DEPLOYMENT_OUTPUT=$deploymentOutput" >> $GITHUB_ENV
 
       - name: Extract Web App Names
         id: extract
@@ -53,7 +54,7 @@ jobs:
           webAppNameWestUS=$(echo "${{ needs.deploy_infrastructure.outputs.deploymentOutput }}" | jq -r '.properties.outputs.webAppNameWestUS.value')
           webAppNameEastUS=$(echo "${{ needs.deploy_infrastructure.outputs.deploymentOutput }}" | jq -r '.properties.outputs.webAppNameEastUS.value')
 
-          echo "Deployment Output: $deploymentOutput"
+          deploymentOutput=${{ env.DEPLOYMENT_OUTPUT }}
           webAppNameWestUS=$(echo "$deploymentOutput" | jq -r '.properties.outputs.webAppNameWestUS.value')
           webAppNameEastUS=$(echo "$deploymentOutput" | jq -r '.properties.outputs.webAppNameEastUS.value')
 
