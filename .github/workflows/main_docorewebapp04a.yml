@@ -75,6 +75,7 @@ jobs:
         run: |
           az webapp deployment list-publishing-profiles --name ${{ env.WEBAPPNAMEWESTUS }} --resource-group $RESOURCE_GROUP --query '[?publishMethod==`MSDeploy`].{name:name, url:publishUrl, profile:publishProfile}' --output json > publishProfileWestUS.json
           echo "publishProfileWestUS: $(cat publishProfileWestUS.json)"
+          echo "PUBLISHPROFILEWESTUS=$publishProfileWestUS" >> $GITHUB_ENV
 
         shell: bash
         env:
@@ -85,6 +86,7 @@ jobs:
         run: |
           az webapp deployment list-publishing-profiles --name ${{ env.WEBAPPNAMEEASTUS }} --resource-group $RESOURCE_GROUP --query '[?publishMethod==`MSDeploy`].{name:name, url:publishUrl, profile:publishProfile}' --output json > publishProfileEastUS.json
           echo "publishProfileEastUS: $(cat publishProfileEastUS.json)"
+          echo "PUBLISHPROFILEEASTUS=$publishProfileEastUS" >> $GITHUB_ENV
 
         shell: bash
         env:
@@ -100,13 +102,15 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.WEBAPPNAMEEASTUS }}
-          package: .net-app
-          publish-profile: ${{ steps.get-publish-profile-westus.outputs.publishProfileWestUS }}
+          slot-name: 'Production'
+          package: .
+          publish-profile: ${{ env.PUBLISHPROFILEWESTUS }}
 
       - name: Deploy to Azure Web App (East US)
         id: deploy-to-webapp-east
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.WEBAPPNAMEEASTUS }}
-          package: .net-app
-          publish-profile: ${{ steps.get-publish-profile-eastus.outputs.publishProfileEastUS }}
+          slot-name: 'Production'
+          package: .
+          publish-profile: ${{ env.PUBLISHPROFILEEASTUS }}
