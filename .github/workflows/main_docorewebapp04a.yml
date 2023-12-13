@@ -94,14 +94,22 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ needs.extract.outputs.webAppNameWestUS }}
+          app-name: ${{ env.WEBAPPNAMEEASTUS }}
           package: .net-app
           publish-profile: ${{ steps.get-publish-profile-westus.outputs.publishProfileWestUS }}
+
+        shell: bash
+        env:
+          WEBAPPNAMEWESTUS: ${{ env.WEBAPPNAMEWESTUS }}
 
       - name: Deploy to Azure Web App (East US)
         id: deploy-to-webapp-east
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ needs.extract.outputs.webAppNameEastUS }}
+          app-name: ${{ env.WEBAPPNAMEEASTUS }}
           package: .net-app
           publish-profile: ${{ steps.get-publish-profile-eastus.outputs.publishProfileEastUS }}
+
+        shell: bash
+        env:
+          WEBAPPNAMEEASTUS: ${{ env.WEBAPPNAMEEASTUS }}
