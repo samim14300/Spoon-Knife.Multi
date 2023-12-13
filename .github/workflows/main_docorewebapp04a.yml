@@ -49,7 +49,7 @@ jobs:
           echo "$deploymentOutput" > deployment_output.txt
           echo "DEPLOYMENT_OUTPUT_FILE=deployment_output.txt" >> $GITHUB_ENV
 
-      - name: Extract Web App Names
+      - name: Retrieve Web App Names
         id: extract
         run: |
           deploymentOutputFile=${{ env.DEPLOYMENT_OUTPUT_FILE }}
