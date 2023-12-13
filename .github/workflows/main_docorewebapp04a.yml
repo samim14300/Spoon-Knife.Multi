@@ -101,7 +101,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.WEBAPPNAMEEASTUS }}
+          app-name: ${{ env.WEBAPPNAMEWESTUS }}
           slot-name: 'Production'
           package: .
           publish-profile: ${{ env.PUBLISHPROFILEWESTUS }}
