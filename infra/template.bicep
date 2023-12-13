@@ -3,10 +3,10 @@ param locationEastUS string = 'East US'
 param resourceGroupName string
 param sku string = 'F1'
 
-var uniqueString = toLower(substring(uniqueString(resourceGroupName), 0, 6)) // Using a part of the resource group name as a unique string
+var prefix = toLower(substring(uniqueString(resourceGroupName), 0, 6)) // Using a part of the resource group name as a unique string
 
 resource appServicePlanWestUS 'Microsoft.Web/serverfarms@2018-11-01' = {
-  name: '${uniqueString}-asp-westus'
+  name: '${prefix}-asp-westus'
   location: locationWestUS
   sku: {
     name: sku
@@ -14,7 +14,7 @@ resource appServicePlanWestUS 'Microsoft.Web/serverfarms@2018-11-01' = {
 }
 
 resource webAppWestUS 'Microsoft.Web/sites@2019-08-01' = {
-  name: '${uniqueString}-webapp-westus'
+  name: '${prefix}-webapp-westus'
   location: locationWestUS
   properties: {
     serverFarmId: appServicePlanWestUS.id
@@ -25,7 +25,7 @@ resource webAppWestUS 'Microsoft.Web/sites@2019-08-01' = {
 }
 
 resource appServicePlanEastUS 'Microsoft.Web/serverfarms@2018-11-01' = {
-  name: '${uniqueString}-asp-eastus'
+  name: '${prefix}-asp-eastus'
   location: locationEastUS
   sku: {
     name: sku
@@ -33,7 +33,7 @@ resource appServicePlanEastUS 'Microsoft.Web/serverfarms@2018-11-01' = {
 }
 
 resource webAppEastUS 'Microsoft.Web/sites@2019-08-01' = {
-  name: '${uniqueString}-webapp-eastus'
+  name: '${prefix}-webapp-eastus'
   location: locationEastUS
   properties: {
     serverFarmId: appServicePlanEastUS.id
