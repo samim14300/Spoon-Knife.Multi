@@ -47,9 +47,9 @@ jobs:
           echo "Deployment Output: $deploymentOutput"
           {
             echo 'DEPLOYMENT_OUTPUT<<EOF'
-            $deploymentOutput
+            echo $deploymentOutput
             echo EOF 
-          }  >> $GITHUB_OUTPUT
+          }  >> "$GITHUB_OUTPUT"
 
       - name: Extract Web App Names
         id: extract
