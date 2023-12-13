@@ -1,0 +1,81 @@
+name: Build, Provision, and Deploy ASP.Net Core app to Azure Web App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+          include-prerelease: true
+
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
+
+      - name: dotnet publish
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
+
+      - name: Set up Azure CLI
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Infrastructure with Bicep
+        id: deploy_infrastructure
+        run: |
+          deploymentOutput=$(az deployment group create --resource-group <YOUR_RESOURCE_GROUP> --template-file ./infra/template.bicep --parameters ./infra/parameters.json --output json)
+          echo "::set-output name=deploymentOutput::$deploymentOutput"
+
+      - name: Extract Web App Names
+        id: extract
+        run: |
+          webAppNameWestUS=$(echo ${{ needs.deploy_infrastructure.outputs.deploymentOutput }} | jq -r '.properties.outputs.webAppNameWestUS.value')
+          webAppNameEastUS=$(echo ${{ needs.deploy_infrastructure.outputs.deploymentOutput }} | jq -r '.properties.outputs.webAppNameEastUS.value')
+
+          echo "::set-output name=webAppNameWestUS::$webAppNameWestUS"
+          echo "::set-output name=webAppNameEastUS::$webAppNameEastUS"
+
+      - name: Retrieve Publish Profile for West US
+        id: get-publish-profile-westus
+        run: |
+          az webapp deployment list-publishing-profiles --name ${{ needs.extract.outputs.webAppNameWestUS }} --resource-group <YOUR_RESOURCE_GROUP_WESTUS> --query '[?publishMethod==`MSDeploy`].{name:name, url:publishUrl, profile:publishProfile}' --output json > publishProfileWestUS.json
+          echo "::set-output name=publishProfileWestUS::$(cat publishProfileWestUS.json)"
+
+      - name: Retrieve Publish Profile for East US
+        id: get-publish-profile-eastus
+        run: |
+          az webapp deployment list-publishing-profiles --name ${{ needs.extract.outputs.webAppNameEastUS }} --resource-group <YOUR_RESOURCE_GROUP_EASTUS> --query '[?publishMethod==`MSDeploy`].{name:name, url:publishUrl, profile:publishProfile}' --output json > publishProfileEastUS.json
+          echo "::set-output name=publishProfileEastUS::$(cat publishProfileEastUS.json)"
+
+      - name: Deploy to Azure Web App (West US)
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ needs.extract.outputs.webAppNameWestUS }}
+          package: .net-app
+          publish-profile: ${{ steps.get-publish-profile-westus.outputs.publishProfileWestUS }}
+
+      - name: Deploy to Azure Web App (East US)
+        id: deploy-to-webapp-east
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ needs.extract.outputs.webAppNameEastUS }}
+          package: .net-app
+          publish-profile: ${{ steps.get-publish-profile-eastus.outputs.publishProfileEastUS }}

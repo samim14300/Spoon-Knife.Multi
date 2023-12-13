@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "locationWestUS": {
+      "value": "West US"
+    },
+    "locationEastUS": {
+      "value": "East US"
+    },
+    "resourceGroupName": {
+      "value": "<YOUR_RESOURCE_GROUP_NAME>"
+    }
+  }
+}
