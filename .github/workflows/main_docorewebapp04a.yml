@@ -45,18 +45,14 @@ jobs:
         run: |
           deploymentOutput=$(az deployment group create --resource-group $RESOURCE_GROUP --template-file ./infra/template.bicep --parameters ./infra/parameters.json --output json)
           echo "Deployment Output: $deploymentOutput"
-          {
-            echo 'DEPLOYMENT_OUTPUT<<EOF'
-            echo $deploymentOutput
-            echo EOF 
-          }  >> "$GITHUB_OUTPUT"
+          echo "::set-output name=deploymentOutput::$deploymentOutput"
 
       - name: Extract Web App Names
         id: extract
         run: |
-          echo "Deployment Output: ${{ steps.deploy_infrastructure.outputs.DEPLOYMENT_OUTPUT }}"
-          webAppNameWestUS=$(echo "${{ steps.deploy_infrastructure.outputs.DEPLOYMENT_OUTPUT }}" | jq -r '.properties.outputs.webAppNameWestUS.value')
-          webAppNameEastUS=$(echo "${{ steps.deploy_infrastructure.outputs.DEPLOYMENT_OUTPUT }}" | jq -r '.properties.outputs.webAppNameEastUS.value')
+          echo "Deployment Output: ${{ steps.deploy_infrastructure.outputs.deploymentOutput }}"
+          webAppNameWestUS=$(echo "${{ steps.deploy_infrastructure.outputs.deploymentOutput }}" | jq -r '.properties.outputs.webAppNameWestUS.value')
+          webAppNameEastUS=$(echo "${{ steps.deploy_infrastructure.outputs.deploymentOutput }}" | jq -r '.properties.outputs.webAppNameEastUS.value')
 
           echo "Web App Name West US: $webAppNameWestUS"
           echo "Web App Name East US: $webAppNameEastUS"
