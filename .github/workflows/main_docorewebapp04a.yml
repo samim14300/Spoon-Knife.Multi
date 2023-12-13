@@ -52,6 +52,9 @@ jobs:
           webAppNameWestUS=$(echo ${{ needs.deploy_infrastructure.outputs.deploymentOutput }} | jq -r '.properties.outputs.webAppNameWestUS.value')
           webAppNameEastUS=$(echo ${{ needs.deploy_infrastructure.outputs.deploymentOutput }} | jq -r '.properties.outputs.webAppNameEastUS.value')
 
+          echo "Web App Name West US: $webAppNameWestUS"
+          echo "Web App Name East US: $webAppNameEastUS"
+
           echo "::set-output name=webAppNameWestUS::$webAppNameWestUS"
           echo "::set-output name=webAppNameEastUS::$webAppNameEastUS"
 
