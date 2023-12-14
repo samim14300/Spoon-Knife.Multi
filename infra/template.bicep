@@ -1,7 +1,7 @@
 param locationWestUS string = 'West US'
 param locationEastUS string = 'East US'
 param resourceGroupName string
-param sku string = 'F1'
+param sku string = 'S1'
 
 var prefix = toLower(substring(uniqueString(resourceGroupName), 0, 6)) // Using a part of the resource group name as a unique string
 
