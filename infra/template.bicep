@@ -14,7 +14,7 @@ resource appServicePlanWestUS 'Microsoft.Web/serverfarms@2018-11-01' = {
 }
 
 resource webAppWestUS 'Microsoft.Web/sites@2019-08-01' = {
-  name: '${prefix}-webapp-westus'
+  name: '${prefix}-mywebapp-westus'
   location: locationWestUS
   properties: {
     serverFarmId: appServicePlanWestUS.id
@@ -33,7 +33,7 @@ resource appServicePlanEastUS 'Microsoft.Web/serverfarms@2018-11-01' = {
 }
 
 resource webAppEastUS 'Microsoft.Web/sites@2019-08-01' = {
-  name: '${prefix}-webapp-eastus'
+  name: '${prefix}-mywebapp-eastus'
   location: locationEastUS
   properties: {
     serverFarmId: appServicePlanEastUS.id
