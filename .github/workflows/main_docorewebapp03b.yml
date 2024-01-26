@@ -54,8 +54,8 @@ jobs:
           cat deployment_output.txt
 
           # Use jq to extract the Web App names
-          webAppNameWestUS=$(jq -r '.properties.outputResources[] | select(.id | endswith("webapp-westus")).id | split("/") | .[-1]' "$deploymentOutputFile")
-          webAppNameEastUS=$(jq -r '.properties.outputResources[] | select(.id | endswith("webapp-eastus")).id | split("/") | .[-1]' "$deploymentOutputFile")
+          webAppNameWestUS=$(jq -r '.properties.outputResources[] | select(.id | endswith("mywebapp-westus")).id | split("/") | .[-1]' "$deploymentOutputFile")
+          webAppNameEastUS=$(jq -r '.properties.outputResources[] | select(.id | endswith("mywebapp-eastus")).id | split("/") | .[-1]' "$deploymentOutputFile")
 
           echo "Web App Name West US: $webAppNameWestUS"
           echo "Web App Name East US: $webAppNameEastUS"
